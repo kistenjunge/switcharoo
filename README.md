@@ -22,7 +22,7 @@ Then simply install and run it:
 
 ```bash
 npm install
-npm run
+npm start
 ```
 
 Since that's probably the first time starting the application, you'll need to open you browser and navigate to the fetch
