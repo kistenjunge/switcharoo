@@ -1,6 +1,6 @@
 # SWITCHAROO
 
-Fetches current switch games on sale from the nintendo store. Also looks up the metacritic score. The final result
+Fetches the current switch games on sale from the nintendo store. Also looks up the metacritic score. The final result
 will be a basic data table, sorted by metacritic rating.
 Works for european :video_game: store only.
 
