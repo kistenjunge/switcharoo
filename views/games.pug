@@ -2,12 +2,12 @@ extends layout
 
 mixin game(item)
     tr(class="mdc-data-table__row")
-        td(class="mdc-data-table__cell mdc-data-table__cell--numeric") #{item.score}
-        td(class="mdc-data-table__cell mdc-data-table__cell--numeric") #{item.discount}
-        td(class="mdc-data-table__cell") #{item.title}
-        td(class="mdc-data-table__cell mdc-data-table__cell--numeric") #{item.priceDiscount}
-        td(class="mdc-data-table__cell mdc-data-table__cell--numeric") #{item.priceRegular}
-        td(class="mdc-data-table__cell")
+        td #{item.score}
+        td #{item.discount}
+        td #{item.title}
+        td #{item.priceDiscount}
+        td #{item.priceRegular}
+        td
             a(class="mdc-icon-button meterial-icons" href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
                 i(class="material-icons mdc-button__icon") storefront
             a(class="mdc-icon-button meterial-icons" href='https://www.metacritic.com/' + item.metacriticUrl rel="noopener noreferrer" target="_blank")
@@ -16,21 +16,15 @@ mixin game(item)
 block content
   h1= title
   p Currently there are #{gameCount} rated games on sale
-  p
-  div(class='mdc-layout-grid')
-      div(class='mdc-layout-grid__inner')
-          div(class='mdc-layout-grid__cell mdc-layout-grid__cell--span-2')
-          div(class='mdc-layout-grid__cell mdc-layout-grid__cell--span-8 mdc-layout-grid__cell--align-middle')
-              div(class="mdc-data-table")
-                table(class="mdc-data-table__table" style="width: 100%")
-                  thead
-                    tr(class="mdc-data-table__header-row")
-                      th(class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric mdc-typography mdc-typography--subtitle1" role="columnheader" scope="col") Score
-                      th(class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric mdc-typography mdc-typography--subtitle1" role="columnheader" scope="col") Sale
-                      th(class="mdc-data-table__header-cell mdc-typography mdc-typography--subtitle1" role="columnheader" scope="col") Title
-                      th(class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric mdc-typography mdc-typography--subtitle1" role="columnheader" scope="col") Actual Price
-                      th(class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric mdc-typography mdc-typography--subtitle1" role="columnheader" scope="col") Original Price
-                      th(class="mdc-data-table__header-cell mdc-typography mdc-typography--subtitle1" role="columnheader" scope="col") Links
-                  tbody(class="mdc-data-table__content")
-                    for gameItem in gamesList
-                        +game(gameItem)
+    table(class="table table-bordered table-hover" data-toggle="table" style="width: 100%")
+      thead(class="thead-dark")
+        tr(class="mdc-data-table__header-row")
+          th(data-sortable="true" data-field="score") Score
+          th(data-sortable="true") Sale
+          th(data-sortable="true") Title
+          th(data-sortable="true") Actual Price
+          th(data-sortable="true") Original Price
+          th(scope="col") Links
+      tbody
+        for gameItem in gamesList
+            +game(gameItem)
