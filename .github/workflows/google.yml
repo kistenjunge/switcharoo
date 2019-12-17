@@ -19,6 +19,7 @@ on:
 env:
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
   GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
+  API_KEY_MC: ${{ secrets.API_KEY_MC }}
   GITHUB_SHA: ${{ github.sha }}
   GKE_ZONE: europe-west3-a
   GKE_CLUSTER: switcharoo
@@ -51,6 +52,7 @@ jobs:
         run: |
           docker build -t gcr.io/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
+            --build-arg API_KEY_MC="$API_KEY_MC" \
             --build-arg GITHUB_REF="$GITHUB_REF" .
 
       # Push the Docker image to Google Container Registry
