@@ -5,7 +5,7 @@ const SwitchEshop = require('nintendo-switch-eshop');
 module.exports = () => {
     return {
         getGamesOnSale: () => {
-            return SwitchEshop.getGamesEurope().then(games => {
+            return SwitchEshop.getGamesEurope({ limit: SwitchEshop.EshopError.EU_GAME_LIST_LIMIT, locale: 'de'}).then(games => {
                 return games.filter(g => g.price_has_discount_b);
             }, () => { console.log('Failed to fetch games from store')});
         }
