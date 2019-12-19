@@ -6,6 +6,6 @@ module.exports = (dataService) => {
         const ratedGames = dataService.getRatedGames().sort( (a, b) => b.score - a.score);
         const unratedGames = dataService.getUnratedGames();
         const games = ratedGames.concat(unratedGames);
-        res.render('games', { title: 'Games on Sale', gameCount: games.length, gamesList: games });
+        res.render('games', { title: games.length + ' Games on Sale', gamesList: games });
     };
 };
