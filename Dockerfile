@@ -1,5 +1,8 @@
 FROM node:13
-  
+
+# set timezone
+ENV TZ Europe/Berlin
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -16,8 +19,8 @@ RUN npm ci --only=production
 COPY . .
 
 ARG API_KEY_MC
-ENV API_KEY_METACRITIC=$API_KEY_MC
 ARG IMAGE_VERSION
+ENV API_KEY_METACRITIC=$API_KEY_MC
 ENV IMAGE_VERSION=$GITHUB_SHA
 
 #EXPOSE 8080
