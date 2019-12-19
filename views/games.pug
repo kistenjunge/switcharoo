@@ -18,6 +18,9 @@ mixin game(item)
                     i(class="material-icons mdc-button__icon") show_chart
 
 block content
+  div.buildinfo
+    span(class="badge badge-info") #{lastFetch}
+    span(class="badge badge-dark") #{version}
   h1= title
   div(class="filter")
     label(for="cbRating" class="form-check-label") Display

@@ -17,6 +17,7 @@ function Sleep(milliseconds) {
 
 module.exports = (dataService, nintendoService, metacriticService) => {
     return {
+        lastFetch: undefined,
         fetchAndStore: async () => {
             const fetchedGames = await nintendoService.getGamesOnSale();
             const games = fetchedGames.map( g => new Game(g));
@@ -27,7 +28,14 @@ module.exports = (dataService, nintendoService, metacriticService) => {
             });
             dataService.deleteAllGames();
             games.map(game => dataService.saveGame(game));
+            this.lastFetch = Date.now();
             return games.length;
+        },
+        getLastFetchDate: () => {
+            if (this.lastFetch != null)
+                return Date(this.lastFetch).toString();
+            else
+                return 'not fetched yet'
         }
     }
 };
