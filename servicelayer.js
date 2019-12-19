@@ -3,9 +3,13 @@ module.exports = (dir) => {
     const nintendo = require(dir + '/nintendoShopService')();
     const metacritic = require(dir + '/metacriticService')();
     const data = require(dir + '/gameService')();
+    const fetch = require(dir + '/fetchService')(data, nintendo, metacritic);
+    const cronjob = require(dir + '/cronjob')(fetch);
     return {
         data,
         nintendo,
-        metacritic
+        metacritic,
+        fetch,
+        cronjob
     };
 };
