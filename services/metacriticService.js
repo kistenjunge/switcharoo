@@ -13,7 +13,7 @@ module.exports = () => {
          */
         guessGameUrl: (platform, title) => {
             const possiblePath = title
-                .replace(/([:\/'])/g, '')
+                .replace(/([#;,:\/'])/g, '')
                 .replace(/\s/g, '-')
                 .toLowerCase();
             return `/game/${platform}/${possiblePath}`;

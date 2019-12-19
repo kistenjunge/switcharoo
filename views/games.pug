@@ -1,8 +1,11 @@
 extends layout
 
 mixin game(item)
-    tr(class="mdc-data-table__row")
-        td #{item.score}
+    tr(class="mdc-data-table__row").content
+        if item.score == null
+            td -
+        else
+            td.metascore #{item.score}
         td #{item.discount}
         td #{item.title}
         td #{item.priceDiscount}
@@ -10,13 +13,17 @@ mixin game(item)
         td
             a(class="mdc-icon-button meterial-icons" href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
                 i(class="material-icons mdc-button__icon") storefront
-            a(class="mdc-icon-button meterial-icons" href='https://www.metacritic.com/' + item.metacriticUrl rel="noopener noreferrer" target="_blank")
-                i(class="material-icons mdc-button__icon") show_chart
+            if item.score != null
+                a(class="mdc-icon-button meterial-icons" href='https://www.metacritic.com/' + item.metacriticUrl rel="noopener noreferrer" target="_blank")
+                    i(class="material-icons mdc-button__icon") show_chart
 
 block content
   h1= title
-  p Currently there are #{gameCount} rated games on sale
-    table(class="table table-bordered table-hover" data-toggle="table" style="width: 100%")
+  div(class="filter")
+    label(for="cbRating" class="form-check-label") Display
+    input(id="cbRating" type="checkbox" data-toggle="toggle" data-onstyle="dark" data-on="rated only" data-off="all games")
+  div
+    table(id="gamesTable" class="table table-bordered table-hover" data-toggle="table" style="width: 100%")
       thead(class="thead-dark")
         tr(class="mdc-data-table__header-row")
           th(data-sortable="true" data-field="score") Score
@@ -28,3 +35,25 @@ block content
       tbody
         for gameItem in gamesList
             +game(gameItem)
+
+  script.
+      window.onload = function init() {
+      $('#cbRating').change(function() {
+            if($(this).prop('checked'))
+                filterGames();
+            else
+                clearFilter();
+          })
+      $('#gamesTable').on('sort.bs.table', function(name, order) {
+            $('#cbRating').bootstrapToggle('off');
+        })
+      }
+      function filterGames() {
+      $('.content').hide();
+      $('.content').filter( function() {
+      return $(this).children('.metascore').length != 0;
+      }).show()
+      }
+      function clearFilter() {
+      $('.content').show();
+      }
