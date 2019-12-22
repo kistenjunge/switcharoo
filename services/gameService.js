@@ -23,7 +23,7 @@ module.exports = () => {
         },
 
         getRatedGames: () => {
-            return db.games.find().filter(g => Boolean(g.score));
+            return db.games.find().filter(g => (g.score != undefined));
         },
 
         getUnratedGames: () => {
