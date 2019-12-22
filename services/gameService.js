@@ -24,6 +24,17 @@ module.exports = () => {
 
         saveGame: (game) => {
             db.games.save(game);
+        },
+
+        setMetacritInfo: (id, rating, url) => {
+            let query = {
+                _id: id
+            };
+            let update = {
+                score: rating,
+                metacriticUrl: url
+            }
+            db.games.update(query, update);
         }
     }
 };

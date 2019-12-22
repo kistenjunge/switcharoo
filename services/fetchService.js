@@ -15,17 +15,12 @@ function Sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-module.exports = (dataService, nintendoService, metacriticService) => {
+module.exports = (dataService, nintendoService) => {
     return {
         lastFetch: undefined,
         fetchAndStore: async () => {
             const fetchedGames = await nintendoService.getGamesOnSale();
             const games = fetchedGames.map( g => new Game(g));
-            await Promise.all(games.map( game => metacriticService.setRatingForSwitchGame(game)));
-            games.map(game => {
-                game.metacriticUrl = metacriticService.guessGameUrl('switch', game.title);
-                return game;
-            });
             dataService.deleteAllGames();
             games.map(game => dataService.saveGame(game));
             this.lastFetch = Date.now();
