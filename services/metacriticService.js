@@ -19,10 +19,12 @@ module.exports = () => {
             return `/game/${platform}/${possiblePath}`;
         },
 
-        setRatingForSwitchGame: (game) => {
-            return axios({
+        getRatingForSwitchGame: async (title) => {
+            const encodedTitle = encodeURIComponent(title.replace(/\//g, ''));
+            const queryTitle = encodeURIComponent(encodedTitle);
+            return await axios({
                 method: 'get',
-                url: Settings.metacriticBase + encodeURIComponent(game.title.replace(/\//g, '')),
+                url: Settings.metacriticBase + encodedTitle,
                 params: {
                     platform: 'switch'
                 },
@@ -32,13 +34,17 @@ module.exports = () => {
                 }
             }).then( response => {
                 if (response.status === 200) {
-                    game.score = Object.is(response.data.result, 'No result') ? undefined: response.data.result.score;
+                    return Object.is(response.data.result, 'No result') ? {known: false, error: false, score: undefined} : {known: true, error: false, score: response.data.result.score};
                 }
-                else
-                    game.score = undefined;
+                else {
+                    console.log('Error response from metacritic server while getting score for ' + title + ' with uri: ' + queryTitle);
+                    console.log('\tresponse - ' + response.status);
+                    console.log('\tmessage - ' + response.data);
+                    return {error:true, known: undefined, score: undefined};
+                }
             }).catch( error => {
-                console.log('Failed to fetch score for ' + game.title);
-                game.score = undefined;
+                console.log('Exception while getting score for ' + title + ' with uri: ' + queryTitle);
+                return {error: true, known: undefined, score: undefined};
             });
         }
     }

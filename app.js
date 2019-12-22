@@ -11,7 +11,6 @@ const router = require('./router.js')("./routes/",services);
 
 var app = express();
 
-app.use(router);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +26,7 @@ app.use(sassMiddleware({
   indentedSyntax: true, // true = .sass and false = .scss
   sourceMap: true
 }));
+app.use(router);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // catch 404 and forward to error handler

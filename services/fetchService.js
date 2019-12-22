@@ -15,21 +15,30 @@ function Sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-module.exports = (dataService, nintendoService, metacriticService) => {
+function getCount(array) {
+    return (array == null) ? 0 : array.length;
+}
+
+module.exports = (dataService, nintendoService) => {
     return {
         lastFetch: undefined,
         fetchAndStore: async () => {
             const fetchedGames = await nintendoService.getGamesOnSale();
             const games = fetchedGames.map( g => new Game(g));
-            await Promise.all(games.map( game => metacriticService.setRatingForSwitchGame(game)));
-            games.map(game => {
-                game.metacriticUrl = metacriticService.guessGameUrl('switch', game.title);
-                return game;
-            });
-            dataService.deleteAllGames();
-            games.map(game => dataService.saveGame(game));
+            const idsFromStore = games.map(game => game.nsId);
+            const idsStored = dataService.getAllGames().map(game => game.nsId);
+            // find games we already had in sale
+            let alreadyStored = idsFromStore.filter(x => idsStored.includes(x));
+            // find games that aren't in sale anymore
+            let noInSaleAnymore = idsStored.filter(x => !idsFromStore.includes(x));
+            // find games we hadn't in sale yet
+            let nowInSale = idsFromStore.filter(x => !idsStored.includes(x));
+            console.log('Fetch result - to add: ' + getCount(nowInSale) + ', to remove: ' + getCount(noInSaleAnymore) + ', already knwon: ' + getCount(alreadyStored));
+            const gamesToAdd = games.filter(game => nowInSale.includes(game.nsId));
+            gamesToAdd.map(game => dataService.saveGame(game));
+            noInSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
             this.lastFetch = Date.now();
-            return games.length;
+            return {added: getCount(nowInSale), removed: getCount(noInSaleAnymore), unchanged: getCount(alreadyStored)};
         },
         getLastFetchDate: () => {
             if (this.lastFetch != null)
