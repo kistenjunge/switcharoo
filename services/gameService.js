@@ -9,6 +9,10 @@ module.exports = () => {
             return db.games.find();
         },
 
+        getGameByTitle: (title) => {
+            return db.games.findOne({ title: title});
+        },
+
         deleteAllGames: () => {
             db.games.remove();
             db.connect('./data', ['games']);

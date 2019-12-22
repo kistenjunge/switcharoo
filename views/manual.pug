@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    if title
+        if (score && score > 0)
+            div(class="alert alert-primary" role="alert") Manually updated entry for '#{title}' with score '#{score}'
+        else
+            div(class="alert alert-danger" role="alert") Metacritic returned no score for '#{title}'
+    form(method='POST' action='/updategame')
+        label(for='title') Enter title of game to update:
+        input#name.form-control(type='text', placeholder='title' name='title')
+        button.btn.btn-primary(type='submit') Update
