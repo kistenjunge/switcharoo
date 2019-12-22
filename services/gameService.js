@@ -18,12 +18,16 @@ module.exports = () => {
             db.connect('./data', ['games']);
         },
 
+        deleteGameByNsId: (nsId) => {
+            db.games.remove({nsId: nsId});
+        },
+
         getRatedGames: () => {
             return db.games.find().filter(g => Boolean(g.score));
         },
 
         getUnratedGames: () => {
-            return db.games.find().filter(g => !Boolean(g.score));
+            return db.games.find().filter(g => (g.score == undefined));
         },
 
         saveGame: (game) => {

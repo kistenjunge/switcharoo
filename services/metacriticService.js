@@ -34,17 +34,17 @@ module.exports = () => {
                 }
             }).then( response => {
                 if (response.status === 200) {
-                    return Object.is(response.data.result, 'No result') ? -1 : response.data.result.score;
+                    return Object.is(response.data.result, 'No result') ? {known: false, error: false, score: undefined} : {known: true, error: false, score: response.data.result.score};
                 }
                 else {
                     console.log('Error response from metacritic server while getting score for ' + title + ' with uri: ' + queryTitle);
                     console.log('\tresponse - ' + response.status);
                     console.log('\tmessage - ' + response.data);
-                    return undefined;
+                    return {error:true, known: undefined, score: undefined};
                 }
             }).catch( error => {
                 console.log('Exception while getting score for ' + title + ' with uri: ' + queryTitle);
-                return undefined;
+                return {error: true, known: undefined, score: undefined};
             });
         }
     }

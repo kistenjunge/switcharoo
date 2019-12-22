@@ -1,13 +1,9 @@
 'use strict';
 
-module.exports = (dataService, metacriticService) => {
+
+module.exports = (scoreUpdateService) => {
     return async (req,res) => {
-        let games = dataService.getAllGames();
-        await Promise.all(games.map( async game => {
-            let score = await metacriticService.getRatingForSwitchGame(game.title);
-            let url = metacriticService.guessGameUrl('switch', game.title);
-            dataService.setMetacritInfo(game._id, score, url);
-        }));
-        res.send("Finished updating games with scores");
+        let result = await scoreUpdateService.checkAndUpdateScores();
+        res.send("Finished score update. Total failures: " + result.failures + " out of " + result.checked);
     };
 };
