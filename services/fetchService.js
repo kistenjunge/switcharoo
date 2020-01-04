@@ -27,18 +27,18 @@ module.exports = (dataService, nintendoService) => {
             const games = fetchedGames.map( g => new Game(g));
             const idsFromStore = games.map(game => game.nsId);
             const idsStored = dataService.getAllGames().map(game => game.nsId);
-            // find games we already had in sale
+            // find games we already had on sale
             let alreadyStored = idsFromStore.filter(x => idsStored.includes(x));
-            // find games that aren't in sale anymore
-            let noInSaleAnymore = idsStored.filter(x => !idsFromStore.includes(x));
-            // find games we hadn't in sale yet
-            let nowInSale = idsFromStore.filter(x => !idsStored.includes(x));
-            console.log('Fetch result - to add: ' + getCount(nowInSale) + ', to remove: ' + getCount(noInSaleAnymore) + ', already knwon: ' + getCount(alreadyStored));
-            const gamesToAdd = games.filter(game => nowInSale.includes(game.nsId));
+            // find games that aren't on sale anymore
+            let noOnSaleAnymore = idsStored.filter(x => !idsFromStore.includes(x));
+            // find games we hadn't on sale yet
+            let nowOnSale = idsFromStore.filter(x => !idsStored.includes(x));
+            console.log('Fetch result - to add: ' + getCount(nowOnSale) + ', to remove: ' + getCount(noOnSaleAnymore) + ', already knwon: ' + getCount(alreadyStored));
+            const gamesToAdd = games.filter(game => nowOnSale.includes(game.nsId));
             gamesToAdd.map(game => dataService.saveGame(game));
-            noInSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
+            noOnSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
             this.lastFetch = Date.now();
-            return {added: getCount(nowInSale), removed: getCount(noInSaleAnymore), unchanged: getCount(alreadyStored)};
+            return {added: getCount(nowOnSale), removed: getCount(noOnSaleAnymore), unchanged: getCount(alreadyStored)};
         },
         getLastFetchDate: () => {
             if (this.lastFetch != null)
