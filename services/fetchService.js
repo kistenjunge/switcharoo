@@ -30,15 +30,15 @@ module.exports = (dataService, nintendoService) => {
             // find games we already had on sale
             let alreadyStored = idsFromStore.filter(x => idsStored.includes(x));
             // find games that aren't on sale anymore
-            let noOnSaleAnymore = idsStored.filter(x => !idsFromStore.includes(x));
+            let notOnSaleAnymore = idsStored.filter(x => !idsFromStore.includes(x));
             // find games we hadn't on sale yet
             let nowOnSale = idsFromStore.filter(x => !idsStored.includes(x));
-            console.log('Fetch result - to add: ' + getCount(nowOnSale) + ', to remove: ' + getCount(noOnSaleAnymore) + ', already knwon: ' + getCount(alreadyStored));
+            console.log('Fetch result - to add: ' + getCount(nowOnSale) + ', to remove: ' + getCount(notOnSaleAnymore) + ', already knwon: ' + getCount(alreadyStored));
             const gamesToAdd = games.filter(game => nowOnSale.includes(game.nsId));
             gamesToAdd.map(game => dataService.saveGame(game));
-            noOnSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
+            notOnSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
             this.lastFetch = Date.now();
-            return {added: getCount(nowOnSale), removed: getCount(noOnSaleAnymore), unchanged: getCount(alreadyStored)};
+            return {added: getCount(nowOnSale), removed: getCount(notOnSaleAnymore), unchanged: getCount(alreadyStored)};
         },
         getLastFetchDate: () => {
             if (this.lastFetch != null)
