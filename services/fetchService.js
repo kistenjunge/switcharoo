@@ -6,9 +6,7 @@ function Game(game) {
     this.title = game.title;
     this.description = game.excerpt;
     this.imageUrl = 'https:' + game.image_url_sq_s;
-    this.priceDiscount = game.price_discounted_f;
     this.priceRegular = game.price_regular_f;
-    this.discount = game.price_discount_percentage_f;
     this.nintendoUrl = game.url;
 }
 
@@ -36,18 +34,24 @@ module.exports = (dataService, nintendoService, saleService) => {
             let nowInSale = idsFromStore.filter(x => !idsStored.includes(x));
             console.log('Fetch result - to add: ' + getCount(nowInSale) + ', to remove: ' + getCount(noInSaleAnymore) + ', already knwon: ' + getCount(alreadyStored));
             const gamesToAdd = games.filter(game => nowInSale.includes(game.nsId));
-            const priceInfos = await nintendoService.getPriceInfoForGames(gamesToAdd.map(game => game.nsId));
-            for(let entry of priceInfos.entries()) {
-                saleService.addSale(entry[0], new Sale(entry[1].price, entry[1].start, entry[1].end));
+            let gamesAdded = 0;
+            if (gamesToAdd != undefined && gamesToAdd.length >= 0) {
+                const priceInfos = await nintendoService.getPriceInfoForGames(gamesToAdd.map(game => game.nsId));
+                const addedGames = gamesToAdd
+                    .filter(game => priceInfos.get(game.nsId) != undefined) // remove games without price discount
+                    .map(game => {
+                        const info = priceInfos.get(game.nsId);
+                        const historyEntry = saleService.addSale(game.nsId, new Sale(info.price, info.start, info.end));
+                        game.saleDetails = historyEntry.getSaleInfo();
+                        game.discount = Math.round(((game.priceRegular - game.saleDetails.price)/game.priceRegular)*100);
+                        return game;
+                    })
+                    .map(game => dataService.saveGame(game));
+                gamesAdded = addedGames.length;
             }
-            gamesToAdd.map(game => {
-                game.saleDetails = priceInfos.get(game.nsId);
-                return game;
-            });
-            gamesToAdd.map(game => dataService.saveGame(game));
             noInSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
             this.lastFetch = Date.now();
-            return {added: getCount(nowInSale), removed: getCount(noInSaleAnymore), unchanged: getCount(alreadyStored)};
+            return {added: gamesAdded, removed: getCount(noInSaleAnymore), unchanged: getCount(alreadyStored)};
         },
         getLastFetchDate: () => {
             if (this.lastFetch != null)

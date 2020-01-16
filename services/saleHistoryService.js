@@ -1,6 +1,7 @@
 'use strict';
 const Sale = require('../models/Sale');
 const db = require('diskdb');
+var moment = require('moment');
 
 function HistoryEntry(nsuid) {
     this.nsuid = nsuid;
@@ -27,6 +28,29 @@ HistoryEntry.prototype.getLowestPrice = function() {
     }, Number.MAX_VALUE);
 };
 
+HistoryEntry.prototype.getCurrentSale = function() {
+    const now = moment();
+    return this.sales.find( sale => {
+        const range = moment().range(sale.start, sale.end);
+        return range.contains(now);
+    })
+};
+
+HistoryEntry.prototype.getSaleInfo = function() {
+    const currentSale = this.getCurrentSale();
+    if (currentSale == undefined)
+        return {
+            onSale: false
+        };
+    return {
+        onSale: true,
+        daysLeft: moment(currentSale.end).diff(moment.now(), 'days'),
+        price: currentSale.price,
+        isLowestPrice: currentSale.price == this.lowestPrice,
+        lowestPrice: this.lowestPrice
+    };
+};
+
 HistoryEntry.prototype.totalSales = function() {
   return this.sales.length;
 };
@@ -50,6 +74,7 @@ module.exports = () => {
                 entryToAdd.addSale(sale);
                 db.history.save(entryToAdd);
                 console.log('history entry added ' + entryToAdd.nsuid);
+                return entryToAdd;
             }
             else {
                 let entryToUpdate = HistoryEntry.fromDbEntry(entry);
@@ -66,7 +91,8 @@ module.exports = () => {
                     console.log('sale added for history entry ' + entryToUpdate.nsuid);
                 }
                 else
-                    console.log('sale already stored for history entry ' + entry.nsuid)
+                    console.log('sale already stored for history entry ' + entry.nsuid);
+                return entryToUpdate;
             }
         }
     }
