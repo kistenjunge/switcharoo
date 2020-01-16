@@ -1,4 +1,5 @@
 'use strict';
+const Sale = require('../models/Sale');
 
 function Game(game) {
     this.nsId = Object.is(game.nsuid_txt, undefined) ? "unknown": game.nsuid_txt[0];
@@ -19,7 +20,7 @@ function getCount(array) {
     return (array == null) ? 0 : array.length;
 }
 
-module.exports = (dataService, nintendoService) => {
+module.exports = (dataService, nintendoService, saleService) => {
     return {
         lastFetch: undefined,
         fetchAndStore: async () => {
@@ -35,6 +36,14 @@ module.exports = (dataService, nintendoService) => {
             let nowInSale = idsFromStore.filter(x => !idsStored.includes(x));
             console.log('Fetch result - to add: ' + getCount(nowInSale) + ', to remove: ' + getCount(noInSaleAnymore) + ', already knwon: ' + getCount(alreadyStored));
             const gamesToAdd = games.filter(game => nowInSale.includes(game.nsId));
+            const priceInfos = await nintendoService.getPriceInfoForGames(gamesToAdd.map(game => game.nsId));
+            for(let entry of priceInfos.entries()) {
+                saleService.addSale(entry[0], new Sale(entry[1].price, entry[1].start, entry[1].end));
+            }
+            gamesToAdd.map(game => {
+                game.saleDetails = priceInfos.get(game.nsId);
+                return game;
+            });
             gamesToAdd.map(game => dataService.saveGame(game));
             noInSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
             this.lastFetch = Date.now();
