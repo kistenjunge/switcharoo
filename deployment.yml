@@ -46,3 +46,10 @@ spec:
           env:
             - name: PROJECT_ID
               value: synthetic-span-261517
+          volumeMounts:
+            - name: switcharoo-persisten-storage
+              mountPath: /usr/src/app/data
+      volumes:
+        - name: switcharoo-persisten-storage
+          persistentVolumeClaim:
+            claimName: switcharoo-pv-claim

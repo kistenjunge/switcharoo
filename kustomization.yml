@@ -17,3 +17,4 @@ kind: Kustomization
 resources:
   - deployment.yml
   - service.yml
+  - volume.yml
