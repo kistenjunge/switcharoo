@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
+const Moment = require('moment');
+const MomentRange = require('moment-range');
+const moment = MomentRange.extendMoment(Moment);
 
 /* SSLA taken from https://github.com/snielsson/simple-service-layer-architecture-for-node-express-apps/blob/master/README.md */
 const services = require('./servicelayer.js')('./services/');

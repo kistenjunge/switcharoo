@@ -8,8 +8,9 @@ mixin game(item)
             td.metascore #{item.score}
         td #{item.discount}
         td #{item.title}
-        td #{item.priceDiscount}
+        td #{item.saleDetails.price}
         td #{item.priceRegular}
+        td #{item.saleDetails.daysLeft}
         td
             a(class="mdc-icon-button meterial-icons" href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
                 i(class="material-icons mdc-button__icon") storefront
@@ -34,6 +35,7 @@ block content
           th(data-sortable="true") Title
           th(data-sortable="true") Actual Price
           th(data-sortable="true") Original Price
+          th(data-sortable="true") Days Left
           th(scope="col") Links
       tbody
         for gameItem in gamesList
