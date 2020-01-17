@@ -1,5 +1,6 @@
 'use strict';
 const Sale = require('../models/Sale');
+var moment = require('moment');
 
 function Game(game) {
     this.nsId = Object.is(game.nsuid_txt, undefined) ? "unknown": game.nsuid_txt[0];
@@ -29,15 +30,18 @@ module.exports = (dataService, nintendoService, saleService) => {
             // find games we already had in sale
             let alreadyStored = idsFromStore.filter(x => idsStored.includes(x));
             // find games that aren't in sale anymore
-            let noInSaleAnymore = idsStored.filter(x => !idsFromStore.includes(x));
+            let notInSaleAnymore = idsStored.filter(x => !idsFromStore.includes(x));
             // find games we hadn't in sale yet
             let nowInSale = idsFromStore.filter(x => !idsStored.includes(x));
-            console.log('Fetch result - to add: ' + getCount(nowInSale) + ', to remove: ' + getCount(noInSaleAnymore) + ', already knwon: ' + getCount(alreadyStored));
+
+            console.log('Fetch result - unknown sales: ' + getCount(nowInSale) + ', to remove: ' + getCount(notInSaleAnymore) + ', already known: ' + getCount(alreadyStored));
+
+            // lookup and add price details to games in sale
             const gamesToAdd = games.filter(game => nowInSale.includes(game.nsId));
-            let gamesAdded = 0;
+            let gamesToAddWithSaleDetails = [];
             if (gamesToAdd != undefined && gamesToAdd.length >= 0) {
                 const priceInfos = await nintendoService.getPriceInfoForGames(gamesToAdd.map(game => game.nsId));
-                const addedGames = gamesToAdd
+                gamesToAddWithSaleDetails = gamesToAdd
                     .filter(game => priceInfos.get(game.nsId) != undefined) // remove games without price discount
                     .map(game => {
                         const info = priceInfos.get(game.nsId);
@@ -45,19 +49,20 @@ module.exports = (dataService, nintendoService, saleService) => {
                         game.saleDetails = historyEntry.getSaleInfo();
                         game.discount = Math.round(((game.priceRegular - game.saleDetails.price)/game.priceRegular)*100);
                         return game;
-                    })
-                    .map(game => dataService.saveGame(game));
-                gamesAdded = addedGames.length;
+                    });
             }
-            noInSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
-            this.lastFetch = Date.now();
-            return {added: gamesAdded, removed: getCount(noInSaleAnymore), unchanged: getCount(alreadyStored)};
+
+            // store new games on sale
+            gamesToAddWithSaleDetails.map(game => dataService.saveGame(game));
+
+            // delete games not in sale anymmore
+            notInSaleAnymore.map(nsId => dataService.deleteGameByNsId(nsId));
+
+            this.lastFetch = moment();
+            return {added: getCount(gamesToAddWithSaleDetails), removed: getCount(notInSaleAnymore), unchanged: getCount(alreadyStored)};
         },
         getLastFetchDate: () => {
-            if (this.lastFetch != null)
-                return Date(this.lastFetch).toString();
-            else
-                return 'not fetched yet'
+            return (this.lastFetch === undefined) ? 'not fetched yet' : this.lastFetch.calendar();
         }
     }
 };

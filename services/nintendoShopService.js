@@ -14,6 +14,7 @@ module.exports = () => {
                 .then(
                     info => {
                         return info.prices
+                            .filter(item => item.sales_status ==='onsale') // only interested in games we can play right now
                             .filter(item => item.discount_price != undefined) // sometimes a sale hasn't got a discount price
                             .reduce((acc, item) => acc.set(item.title_id.toString(), {
                                 price: item.discount_price.raw_value,
