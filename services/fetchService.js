@@ -27,7 +27,7 @@ module.exports = (dataService, nintendoService, saleService) => {
             const games = fetchedGames.map( g => new Game(g));
             const idsFromStore = games.map(game => game.nsId);
             const idsStored = dataService.getAllGames().map(game => game.nsId);
-            // find games we already had in sale
+            // find games we already had on sale
             let alreadyStored = idsFromStore.filter(x => idsStored.includes(x));
             // find games that aren't in sale anymore
             let notInSaleAnymore = idsStored.filter(x => !idsFromStore.includes(x));
