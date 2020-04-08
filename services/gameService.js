@@ -34,13 +34,23 @@ module.exports = () => {
             db.games.save(game);
         },
 
+        setMetacriticTitle: (id, title) => {
+            const query = {
+                _id: id
+            };
+            const update = {
+                metacriticTitle: title
+            }
+            db.games.update(query, update);
+        },
+
         setMetacritInfo: (id, rating, url) => {
             let query = {
                 _id: id
             };
             let update = {
                 score: rating,
-                metacriticUrl: url
+                metacriticUrl: url,
             }
             db.games.update(query, update);
         }

@@ -11,7 +11,20 @@ module.exports = (dataService, metacriticService) => {
             let games = dataService.getUnratedGames();
             let failedGames = [];
             await Promise.all(games.map( async game => {
-                let scoreResponse = await metacriticService.getRatingForSwitchGame(game.title);
+                var metacriticTitle;
+                if(game.metacriticTitle)
+                {
+                    metacriticTitle = game.metacriticTitle;
+                } else {
+                    try {
+                        metacriticTitle = await metacriticService.searchSwitchGame(game.title);
+                    } catch(e) {
+                        failedGames.push(game);
+                        return;
+                    }
+                    dataService.setMetacriticTitle(game._id, metacriticTitle);
+                }
+                let scoreResponse = await metacriticService.fetchSoreForSwitchGame(metacriticTitle);
                 if (!scoreResponse.error && scoreResponse.known) {
                     let url = metacriticService.guessGameUrl('switch', game.title);
                     dataService.setMetacritInfo(game._id, scoreResponse.score, url);
