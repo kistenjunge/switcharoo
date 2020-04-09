@@ -18,6 +18,7 @@
     "diskdb": "^0.1.17",
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
+    "fast-levenshtein": "^2.0.6",
     "http-errors": "~1.6.3",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",

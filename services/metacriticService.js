@@ -1,6 +1,8 @@
 'use strict';
 const axios = require('axios').default;
 const Settings = require('../settings');
+const levenshtein = require('fast-levenshtein');
+
 
 const searchSwitchGame = async (title) => {
     const searchTitle = title.replace(/[^a-zA-Z0-9öäüÖÄÜß\-:]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -28,13 +30,17 @@ const searchSwitchGame = async (title) => {
             }
 
             if (response.data.result && Array.isArray(response.data.result)) {
-                const metacriticTitle = response.data.result.filter(r => r.platform === 'Switch').map(r => r.title);
-                if (Array.isArray(metacriticTitle) && metacriticTitle.length && metacriticTitle[0]) {
-                    console.log(`Found name from Metacritic ${metacriticTitle}`);
-                    return Promise.resolve(metacriticTitle[0]);
+                const metacriticTitles = response.data.result.filter(r => r.platform === 'Switch');
+                if (Array.isArray(metacriticTitles) && metacriticTitles.length && metacriticTitles[0]) {
+                    return Promise.resolve(getBestMatchTitle(title, metacriticTitles));
+                } else {
+                    if(response.data.result.length == 10)
+                    {
+                        return Promise.resolve(getBestMatchTitle(title, response.data.result ));
+                    }
                 }
             }
-            console.log(`title ${title} not found using ${searchTitle}`)
+            console.log(`title "${title}" not found using "${searchTitle}"`)
             //console.log(response.data);
             return Promise.reject('notFound');
         })
@@ -87,6 +93,23 @@ const getRatingForSwitchGame = async (title) => {
     };
 
     return fetchSoreForSwitchGame(t);
+}
+
+// API only returns ten results, let's try to find the closest match
+const getBestMatchTitle = (title, titlesFromMC) => {
+    var lowestScore = 99;
+    var bestMatch = title;
+
+    titlesFromMC.map(e => e.title).forEach(element => {
+        const score =levenshtein.get(title, element);
+        if(score < lowestScore) {
+            lowestScore = score;
+            bestMatch = element;
+        }
+    });
+
+    
+    return bestMatch;
 }
 
 /**
