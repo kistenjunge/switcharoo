@@ -5,7 +5,12 @@ const levenshtein = require('fast-levenshtein');
 
 
 const searchSwitchGame = async (title) => {
-    const searchTitle = title.replace(/[^a-zA-Z0-9öäüÖÄÜß\-:]/g, ' ').replace(/\s+/g, ' ').trim();
+    const searchTitle = title
+        .replace(/[^a-zA-Z0-9öäüÖÄÜß\-:.]/g, ' ')
+        .replace(/ f[oü]r Nintendo Switch/g, '')
+        .replace(/[\s\-]*Nintendo Switch Edition/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
     return axios({
         "method": "GET",
         "url": "https://chicken-coop.p.rapidapi.com/games",
