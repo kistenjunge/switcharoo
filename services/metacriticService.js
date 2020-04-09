@@ -13,7 +13,7 @@ const searchSwitchGame = async (title) => {
         .trim();
     return axios({
         "method": "GET",
-        "url": "https://chicken-coop.p.rapidapi.com/games",
+        "url": Settings.metacriticBase,
         headers: {
             'content-type': 'application/octet-stream',
             'x-rapidapi-host': Settings.metacriticHost,
