@@ -50,7 +50,7 @@ module.exports = () => {
             };
             let update = {
                 score: rating,
-                metacriticUrl: url,
+                metacriticUrl: url
             }
             db.games.update(query, update);
         }

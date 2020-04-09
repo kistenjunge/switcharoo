@@ -3,22 +3,18 @@ const axios = require('axios').default;
 const Settings = require('../settings');
 const levenshtein = require('fast-levenshtein');
 
+const apiHeaders = {
+    'content-type': 'application/octet-stream',
+    'x-rapidapi-host': Settings.metacriticHost,
+    'x-rapidapi-key': Settings.metacriticKey
+};
 
 const searchSwitchGame = async (title) => {
-    const searchTitle = title
-        .replace(/[^a-zA-Z0-9öäüÖÄÜß\-:.]/g, ' ')
-        .replace(/ f[oü]r Nintendo Switch/g, '')
-        .replace(/[\s\-]*Nintendo Switch Edition/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
+    const searchTitle = getSearchTitle(title);
     return axios({
         "method": "GET",
-        "url": Settings.metacriticBase,
-        headers: {
-            'content-type': 'application/octet-stream',
-            'x-rapidapi-host': Settings.metacriticHost,
-            'x-rapidapi-key': Settings.metacriticKey
-        },
+        "url": "https://chicken-coop.p.rapidapi.com/games",
+        headers: apiHeaders,
         params: {
             "title": searchTitle
         }
@@ -27,7 +23,6 @@ const searchSwitchGame = async (title) => {
             return Promise.reject('searchError')
         })
         .then((response) => {
-            // console.log(response);
             if (response.status != 200 || !response.data) {
 
                 console.log(`Error searching title ${title}: ${response.status} ${response.data}`);
@@ -35,25 +30,23 @@ const searchSwitchGame = async (title) => {
             }
 
             if (response.data.result && Array.isArray(response.data.result)) {
-                const metacriticTitles = response.data.result.filter(r => r.platform === 'Switch');
-                if (Array.isArray(metacriticTitles) && metacriticTitles.length && metacriticTitles[0]) {
-                    return Promise.resolve(getBestMatchTitle(title, metacriticTitles));
+                const switchGames = response.data.result.filter(r => r.platform === 'Switch');
+                if (Array.isArray(switchGames) && switchGames[0]) {
+                    return Promise.resolve(getBestMatchTitle(title, switchGames));
                 } else {
-                    if(response.data.result.length == 10)
-                    {
-                        return Promise.resolve(getBestMatchTitle(title, response.data.result ));
+                    if (response.data.result.length == 10) {
+                        // API only returns ten results, let's try to find the closest match
+                        return Promise.resolve(getBestMatchTitle(title, response.data.result));
                     }
                 }
             }
             console.log(`title "${title}" not found using "${searchTitle}"`)
-            //console.log(response.data);
             return Promise.reject('notFound');
         })
 }
 
 const fetchSoreForSwitchGame = async (title) => {
-    if(!title)
-    {
+    if (!title) {
         console.log('title is undefined');
     }
     const encodedTitle = encodeURIComponent(title.replace(/\//g, ''));
@@ -63,14 +56,9 @@ const fetchSoreForSwitchGame = async (title) => {
         params: {
             platform: 'switch'
         },
-        headers: {
-            'content-type': 'application/octet-stream',
-            'x-rapidapi-host': Settings.metacriticHost,
-            'x-rapidapi-key': Settings.metacriticKey
-        }
+        headers: apiHeaders
     }).then(response => {
         if (response.status === 200) {
-            //console.log(response);
             return Object.is(response.data.result, 'No result') ? { known: false, error: false, score: undefined } : { known: true, error: false, score: response.data.result.score };
         }
         else {
@@ -85,35 +73,19 @@ const fetchSoreForSwitchGame = async (title) => {
     });
 }
 
-const getRatingForSwitchGame = async (title) => {
-    var t;
-    try {
-        t = await searchSwitchGame(title);
-    } catch (e) {
-        if (e.reason == 'notFound') {
-            return { error: false, known: false, score: undefined };
-        } else {
-            return { error: true, known: undefined, score: undefined };
-        }
-    };
-
-    return fetchSoreForSwitchGame(t);
-}
-
-// API only returns ten results, let's try to find the closest match
 const getBestMatchTitle = (title, titlesFromMC) => {
     var lowestScore = 99;
     var bestMatch = title;
 
     titlesFromMC.map(e => e.title).forEach(element => {
-        const score =levenshtein.get(title, element);
-        if(score < lowestScore) {
+        const score = levenshtein.get(title, element);
+        if (score < lowestScore) {
             lowestScore = score;
             bestMatch = element;
         }
     });
 
-    
+    console.log(`Found best match for "${title}" with a score of ${lowestScore}: "${bestMatch}"`);
     return bestMatch;
 }
 
@@ -130,12 +102,20 @@ const guessGameUrl = (platform, title) => {
     return `/game/${platform}/${possiblePath}`;
 }
 
+function getSearchTitle(title) {
+    return title
+        .replace(/[^a-zA-Z0-9öäüÖÄÜß\-:.]/g, ' ')
+        .replace(/ f[oü]r Nintendo Switch/g, '')
+        .replace(/[\s\-]*Nintendo Switch Edition/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 /* https://rapidapi.com/collection/metacritic-api-alternatives */
 module.exports = () => {
     return {
         fetchSoreForSwitchGame,
         searchSwitchGame,
-        getRatingForSwitchGame,
         guessGameUrl
     };
 }
