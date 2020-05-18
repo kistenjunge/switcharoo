@@ -14,8 +14,8 @@ mixin game(item)
         td
             a(class="mdc-icon-button meterial-icons" href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
                 i(class="material-icons mdc-button__icon") storefront
-            if item.score != null
-                a(class="mdc-icon-button meterial-icons" href='https://www.metacritic.com/' + item.metacriticUrl rel="noopener noreferrer" target="_blank")
+            if item.score != null && item.score > -1
+                a(class="mdc-icon-button meterial-icons" href=item.metacriticUrl rel="noopener noreferrer" target="_blank")
                     i(class="material-icons mdc-button__icon") show_chart
 
 block content

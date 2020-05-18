@@ -10,7 +10,7 @@ module.exports = () => {
         },
 
         getGameByTitle: (title) => {
-            return db.games.findOne({ title: title});
+            return db.games.findOne({ title: title });
         },
 
         deleteAllGames: () => {
@@ -19,7 +19,7 @@ module.exports = () => {
         },
 
         deleteGameByNsId: (nsId) => {
-            db.games.remove({nsId: nsId});
+            db.games.remove({ nsId: nsId });
         },
 
         getRatedGames: () => {
@@ -34,22 +34,14 @@ module.exports = () => {
             db.games.save(game);
         },
 
-        setMetacriticTitle: (id, title) => {
-            const query = {
-                _id: id
-            };
-            const update = {
-                metacriticTitle: title
-            }
-            db.games.update(query, update);
-        },
-
         setMetacritInfo: (id, rating, url) => {
+            const score = (rating === 'tbd') ? 0 : rating;
+
             let query = {
                 _id: id
             };
             let update = {
-                score: rating,
+                score: score,
                 metacriticUrl: url
             }
             db.games.update(query, update);

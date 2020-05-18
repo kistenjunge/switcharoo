@@ -20,11 +20,17 @@
     "express": "~4.16.1",
     "fast-levenshtein": "^2.0.6",
     "http-errors": "~1.6.3",
+    "metacritic": "0.0.11",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "morgan": "~1.9.1",
     "nintendo-switch-eshop": "^2.2.8",
     "node-sass-middleware": "^0.11.0",
     "pug": "^2.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "prettier": "^2.0.4",
+    "prettier-eslint": "^9.0.1"
   }
 }

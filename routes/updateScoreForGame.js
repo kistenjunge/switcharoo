@@ -2,12 +2,11 @@
 
 
 module.exports = (dataService, metacriticService) => {
-    return async (req,res) => {
+    return async (req, res) => {
         const title = req.body.title;
         const game = dataService.getGameByTitle(title);
         var metacriticTitle;
-        if(game.metacriticTitle)
-        {
+        if (game.metacriticTitle) {
             metacriticTitle = game.metacriticTitle;
         } else {
             metacriticTitle = await metacriticService.searchSwitchGame(title);
