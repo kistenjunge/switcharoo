@@ -1,3 +1,16 @@
+@import "@material/animation/functions";
+
+@keyframes fade-in
+  from
+    transform: translateY(-80px)
+    opacity: 0
+  to
+    transform: translateY(0)
+    opacity: 1
+
+.my-element
+  animation: mdc-animation-enter(fade-in, 350ms)
+
 body
   padding: 10px 30px
 

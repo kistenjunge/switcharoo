@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    .my-element.mdc-layout-grid(style="margin-left: 64px; margin-right: 64px")
+      .mdc-layout-grid__inner
+        .mdc-layout-grid__cell
+            ul.mdc-image-list
+                li.mdc-image-list__item
+                    img.mdc-image-list__image(src=game.imageUrl)
+            //div(style='background-image: url(' + game.imageUrl + ')')
+            div Title: #{game.title}
+            div Description: #{game.description}

@@ -1,3 +1,14 @@
+@keyframes fade-in {
+  from {
+    transform: translateY(-80px);
+    opacity: 0; }
+  to {
+    transform: translateY(0);
+    opacity: 1; } }
+
+.my-element {
+  animation: fade-in 350ms 0ms cubic-bezier(0, 0, 0.2, 1); }
+
 body {
   padding: 10px 30px; }
 

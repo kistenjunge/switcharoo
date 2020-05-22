@@ -2,8 +2,10 @@
 	"version": 3,
 	"file": "style.css",
 	"sources": [
-		"style.sass"
+		"style.sass",
+		"../../node_modules/@material/animation/_functions.scss",
+		"../../node_modules/@material/animation/_variables.scss"
 	],
 	"names": [],
-	"mappings": "AAAA,AAAA,IAAI,CAAC;EACH,OAAO,EAAE,SAAS,GAAG;;AAEvB,AAAA,CAAC,CAAC;EACA,KAAK,EAAE,OAAO,GAAG;;AAEnB,AAAA,OAAO,CAAC;EACN,cAAc,EAAE,MAAM,GAAG"
+	"mappings": "AAEA,UAAU,CAAV,OAAU;EACR,IAAI;IACF,SAAS,EAAE,iBAAiB;IAC5B,OAAO,EAAE,CAAC;EACZ,EAAE;IACA,SAAS,EAAE,aAAa;IACxB,OAAO,EAAE,CAAC;;AAEd,AAAA,WAAW,CAAC;EACV,SAAS,EAAsB,OAAO,CAAE,KAAK,CCaS,GAAG,CCFR,0BAAyB,GFXzB;;AAEnD,AAAA,IAAI,CAAC;EACH,OAAO,EAAE,SAAS,GAAG;;AAEvB,AAAA,CAAC,CAAC;EACA,KAAK,EAAE,OAAO,GAAG;;AAEnB,AAAA,OAAO,CAAC;EACN,cAAc,EAAE,MAAM,GAAG"
 }

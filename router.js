@@ -6,6 +6,7 @@ module.exports = (dir,s) => {//s is the services layer.
     router.get('/score', require(dir + 'updateScores.js')(s.scoreUpdate));
     router.get('/manual', require(dir + 'manualRoute.js')());
     router.get('/cards', require(dir + 'cardsRoute.js')(s.data));
+    router.get('/cards/:gameId', require(dir + 'detailRoute.js')(s.data));
     router.post('/updategame', require(dir + 'updateScoreForGame.js')(s.data, s.metacritic));
     return router;
 };

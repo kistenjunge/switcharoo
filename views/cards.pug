@@ -3,24 +3,27 @@ extends layout
 mixin game(item)
     .mdc-layout-grid__cell.mdc-layout-grid__cell--span-4
         .mdc-card
-          //.mdc-card__primary-action
-          .switcharoo-card_header(style='padding: 8px; display: flex')
-            .switcharoo-card_priceContainer(style='flex-grow: 1')
-                mdc-typography.mdc-typography--headline6(style='margin-right: .31rem; opacity: .3; text-decoration: line-through') €#{item.priceRegular}
-                span.mdc-typography.mdc-typography--headline6 €#{item.saleDetails.price}
-            .mdc-typography.mdc-typography--headline6 #{item.score}
-          .mdc-card__media.mdc-card__media--square(style='background-image: url(' + item.imageUrl + ')')
-          .switcharoo-card__info(style='padding: 8px;')
-            .mdc-typography.mdc-typography--headline6(style="font-size: .88rem;") #{item.title}
-            .mdc-typography.mdc-typography--body2 #{item.description}
-          .mdc-card__actions
-            .mdc-card__action-icons
-              a(href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
-                button.material-icons.mdc-icon-button.mdc-card__action.mdc-card__action--icon(title='Nintendo Store') storefront
-              if item.score != null
-                a(href='https://www.metacritic.com/' + item.metacriticUrl rel="noopener noreferrer" target="_blank")
-                  button.material-icons.mdc-icon-button.mdc-card__action.mdc-card__action--icon(title='Metacritic') show_chart
-
+            //.mdc-card__primary-action(onclick='doit(' + item.nsId + ')')
+            .mdc-card__primary-action(onclick=`showDetails(${item.nsId})`)
+                .switcharoo-card_header(style='padding: 8px; display: flex')
+                    .switcharoo-card_priceContainer(style='flex-grow: 1')
+                        mdc-typography.mdc-typography--headline6(style='margin-right: .31rem; opacity: .3; text-decoration: line-through') €#{item.priceRegular}
+                        span.mdc-typography.mdc-typography--headline6 €#{item.saleDetails.price}
+                    .mdc-typography.mdc-typography--headline6 #{item.score}
+                .mdc-card__media.mdc-card__media--square(style='background-image: url(' + item.imageUrl + ')' href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
+                .switcharoo-card__info(style='padding: 8px;')
+                    .mdc-typography.mdc-typography--headline6(style="font-size: .88rem;") #{item.title}
+                    .mdc-typography.mdc-typography--body2 #{item.description}
+            .mdc-card__actions
+                .mdc-card__action-icons
+                  a(href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
+                    button.material-icons.mdc-icon-button.mdc-card__action.mdc-card__action--icon(title='Nintendo Store') storefront
+                  if item.score != null
+                    a(href='https://www.metacritic.com/' + item.metacriticUrl rel="noopener noreferrer" target="_blank")
+                      button.material-icons.mdc-icon-button.mdc-card__action.mdc-card__action--icon(title='Metacritic') show_chart
+block append scripts
+    script(type='text/javascript').
+          function showDetails(nsid) { window.location.href = 'cards/' + nsid }
 block content
     .mdc-layout-grid(style="margin-left: 64px; margin-right: 64px")
       .mdc-layout-grid__inner

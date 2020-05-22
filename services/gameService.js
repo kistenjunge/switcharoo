@@ -13,6 +13,10 @@ module.exports = () => {
             return db.games.findOne({ title: title});
         },
 
+        getGameByStoreId: (id) => {
+            return db.games.findOne({ nsId: id});
+        },
+
         deleteAllGames: () => {
             db.games.remove();
             db.connect('./data', ['games']);
