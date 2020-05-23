@@ -17,9 +17,9 @@ const searchSwitchGame = async (title, cb) => {
 function getSearchTitle(title) {
     return title
         .toLowerCase()
+        .replace(/[:-][a-z0-9öäüß\s]+edition.*/g, '')
         .replace(/[^a-z0-9öäüßō]/g, ' ')
         .replace(/ f[oü]r nintendo switch.*/g, '')
-        .replace(/[:-][a-z0-9öäüß\s]+edition.*/g, '')
         .replace(/\s+/g, ' ')
         .trim();
 }
