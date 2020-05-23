@@ -46,6 +46,10 @@ module.exports = () => {
                 multi: true
             }
 
+            const queryTba = {
+                score: 0
+            };
+
             const queryNotFound = {
                 score: -1
             };
@@ -54,6 +58,7 @@ module.exports = () => {
                 score: undefined
             }
 
+            db.games.update(queryTba, update, options);
             db.games.update(queryNotFound, update, options);
         },
 
