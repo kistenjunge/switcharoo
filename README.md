@@ -23,3 +23,4 @@ At [localhost:3000](http://localhost:3000) you should now find something similar
 
 ## Sources
 Fetching of scores from metacritic is done by [node-metacritic](https://github.com/kocher/node-metacritic)
+

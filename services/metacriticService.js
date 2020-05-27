@@ -24,7 +24,6 @@ function getSearchTitle(title) {
         .trim();
 }
 
-/* https://rapidapi.com/collection/metacritic-api-alternatives */
 module.exports = () => {
     return {
         searchSwitchGame
