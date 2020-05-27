@@ -2,10 +2,12 @@
 module.exports = (dir) => {
     const nintendo = require(dir + '/nintendoShopService')();
     const metacritic = require(dir + '/metacriticService')();
+    const opencritic = require(dir + '/opencriticService')();
+    const rating = require(dir + '/ratingService')(opencritic, metacritic);
     const data = require(dir + '/gameService')();
     const saleHistory = require(dir + '/saleHistoryService')();
     const fetch = require(dir + '/fetchService')(data, nintendo, saleHistory);
-    const scoreUpdate = require(dir + '/scoreUpdateService')(data, metacritic);
+    const scoreUpdate = require(dir + '/scoreUpdateService')(data, rating);
     const cronjobFetch = require(dir + '/fetchCronjob')(fetch);
     const cronjobScore = require(dir + '/scoreCronjob')(scoreUpdate);
     return {
@@ -13,6 +15,8 @@ module.exports = (dir) => {
         saleHistory,
         nintendo,
         metacritic,
+        opencritic,
+        rating,
         fetch,
         scoreUpdate,
         cronjobFetch,

@@ -23,11 +23,21 @@ module.exports = () => {
         },
 
         getRatedGames: () => {
-            return db.games.find().filter(g => (g.score != undefined));
+            return db.games.find()
+                .filter(g => (g.rating !== undefined))
+                .filter(g => (g.rating.score !== undefined));
         },
 
-        getUnratedGames: () => {
-            return db.games.find().filter(g => (g.score == undefined));
+        // rating website link exists, but rating is not available yet
+        getGamesWithoutScore: () => {
+            return db.games.find()
+                .filter(g => (g.rating !== undefined))
+                .filter(g => (g.rating.score === undefined));
+        },
+
+        // could not be found at any rating website
+        getGamesWithoutRating: () => {
+            return db.games.find().filter(g => (g.rating === undefined));
         },
 
         getStats: () => {
@@ -62,16 +72,13 @@ module.exports = () => {
             db.games.update(queryNotFound, update, options);
         },
 
-        setMetacritInfo: (id, rating, url) => {
-            const score = (rating === 'tbd') ? 0 : rating;
-
+        setRating: (id, rating) => {
             let query = {
                 _id: id
             };
             let update = {
-                score: score,
-                metacriticUrl: url
-            }
+                rating: rating
+            };
             db.games.update(query, update);
         }
     }

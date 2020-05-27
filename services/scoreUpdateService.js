@@ -17,10 +17,25 @@ const getBestMatchTitle = (title, titlesFromMC) => {
     return bestMatch;
 }
 
-module.exports = (dataService, metacriticService) => {
+module.exports = (dataService, ratingService) => {
     return {
         lastUpdate: undefined,
-        checkAndUpdateScores: () => {
+        checkAndUpdateScores: async () => {
+            let games = dataService.getGamesWithoutRating();
+            let failedGames = [];
+            await Promise.all(games.map( async game => {
+                let rating = await ratingService.getRatingFor(game.title);
+                if (rating.ratings && rating.ratings.length) {
+                    dataService.setRating(game._id, rating);
+                }
+                else {
+                    failedGames.push(game);
+                }
+            }));
+            console.log("Finished score update. Total failures: " + failedGames.length + " out of " + games.length);
+            return {checked: games.length, updated: (games.length - failedGames.length), failures: failedGames.length};
+        },
+        checkAndUpdateScoresDWBranch: () => {
             let games = dataService.getUnratedGames();
 
             var i = 0;
