@@ -2,9 +2,17 @@
 
 
 module.exports = (dataService, metacriticService) => {
-    return async (req,res) => {
-        let title = req.body.title;
-        let score = await metacriticService.getRatingForSwitchGame(title);
+    return async (req, res) => {
+        const title = req.body.title;
+        const game = dataService.getGameByTitle(title);
+        var metacriticTitle;
+        if (game.metacriticTitle) {
+            metacriticTitle = game.metacriticTitle;
+        } else {
+            metacriticTitle = await metacriticService.searchSwitchGame(title);
+            dataService.setMetacriticTitle(game._id, metacriticTitle)
+        }
+        let score = await metacriticService.fetchSoreForSwitchGame(metacriticTitle);
         if (score && score >= 0) {
             let url = metacriticService.guessGameUrl('switch', title);
             const game = dataService.getGameByTitle(title);

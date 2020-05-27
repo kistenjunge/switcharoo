@@ -8,17 +8,7 @@ Works for european :video_game: store only.
 
 ## Setup
 
-Fetching the rating from metacritic requires a rapid api key. Therefore you'll need a api key from
-[Rapid API](https://rapidapi.com/). :runner:
-
-You can pass the key along by setting the environment variable `API_KEY_METACRITIC`, or define the key in an `.env`
-file in the project's root, like so:
-```
-PORT=3000
-API_KEY_METACRITIC=${put_your_rapid_api_key_here}
-``` 
-
-Then simply install and run it:
+Simply install and run it:
 
 ```bash
 npm install
@@ -30,3 +20,7 @@ endpoint at [http://localhost:3000/fetch](http://localhost:3000/fetch). This may
 you'll be notified with the amount of games found. You'll also find a games.json file at [data/games.json](data/games.json).
 
 At [localhost:3000](http://localhost:3000) you should now find something similar to the sceenshot above. :see_no_evil:
+
+## Sources
+Fetching of scores from metacritic is done by [node-metacritic](https://github.com/kocher/node-metacritic)
+

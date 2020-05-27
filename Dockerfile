@@ -18,9 +18,7 @@ RUN npm ci --only=production
 # Bundle app source
 COPY . .
 
-ARG API_KEY_MC
 ARG GITHUB_SHA
-ENV API_KEY_METACRITIC=$API_KEY_MC
 ENV IMAGE_VERSION=$GITHUB_SHA
 
 VOLUME /usr/src/app/data
