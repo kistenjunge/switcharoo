@@ -4,9 +4,9 @@ var request = require('request')
     , cheerio = require('cheerio')
     , extend = require('extend');
 
-var url = 'https://www.metacritic.com/'
-    , urlSearchAll = 'search/{0}/{1}/results'
-    , urlSearchAllByPlatform = 'search/{0}/{1}/results?search_type=advanced&plats[{2}]=1'
+var url = 'https://www.metacritic.com'
+    , urlSearchAll = '/search/{0}/{1}/results'
+    , urlSearchAllByPlatform = '/search/{0}/{1}/results?search_type=advanced&plats[{2}]=1'
     , urlPage = '?page={0}'
     , currentPage = 0;
 

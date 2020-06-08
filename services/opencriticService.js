@@ -5,15 +5,16 @@ const Settings = require('../settings');
 const service = 'opencritic';
 
 async function searchGame(title) {
-    const titleEncoded = encodeURIComponent(title);
-    return await axios({
-        method: 'get',
-        url: Settings.opencriticBase + '/meta/search',
-        params: {
-            criteria: titleEncoded
-        },
-    }).then(response => {
-        // get first search result
+    try {
+        const titleEncoded = encodeURIComponent(title);
+        const response = await axios({
+            method: 'get',
+            url: Settings.opencriticBase + '/meta/search',
+            params: {
+                criteria: titleEncoded
+            },
+        });
+
         let first = response.data[0];
         // check dist and discard if bigger than 0.59
         if (first.dist <= 0.59) {
@@ -21,55 +22,42 @@ async function searchGame(title) {
         }
         console.log('[info] opencritic - ' + title + ' - not found - distance too high');
         return {error: false, id: undefined, name: undefined};
-    }).catch( () => {
+    }
+    catch (e) {
         console.log('[error] opencritic - ' + title + ' - search request failed - criteria: ' + titleEncoded);
-        return {error: true, id: undefined, name: undefined};
-    });
+        throw Error('opencritic - ' + title + ' - search request failed - criteria: ' + titleEncoded);
+    }
 }
 
 async function getScore(id) {
-    return await axios({
-        method: 'get',
-        url: Settings.opencriticBase + '/game/' + id,
-    }).then(response => {
+    try {
+        const response = await axios({
+            method: 'get',
+            url: Settings.opencriticBase + '/game/' + id,
+        });
         let score = (response.data.medianScore > -1) ? response.data.medianScore : undefined;
         return {error: false, score: score};
-    }).catch( () => {
+    }
+    catch (e) {
         console.log('[error] opencritic - score request failed - id: ' + id);
-        return {error: true, score: undefined};
-    });
-}
-
-async function getRatingForWithErrors(title) {
-    let searchResult = await searchGame(title);
-    if (searchResult.error) {
-        return {error: true, rating: undefined};
+        throw Error('opencritic - score request failed - id: ' + id);
     }
-    if (searchResult.id === undefined) {
-        return {error: false, rating: undefined};
-    }
-
-    let link = 'https://opencritic.com/game/' + searchResult.id + '/' + searchResult.name.replace(/ /g, "-");
-    let rating = await getScore(searchResult.id);
-    if (rating.error) {
-
-        return {error: true, rating: new Rating(undefined, link)};
-    }
-    return {error: false, rating: new Rating(rating.score, link)};
 }
 
 async function getRatingFor(title) {
-    let searchResult = await searchGame(title);
-    if (searchResult.error || searchResult.id === undefined) {
-        return new Rating(undefined, undefined, service);
+    let link = undefined;
+    try {
+        const searchResult = await searchGame(title);
+        if (typeof searchResult.id === 'undefined') {
+            return new Rating(undefined, undefined, service);
+        }
+        link = 'https://opencritic.com/game/' + searchResult.id + '/' + searchResult.name.replace(/ /g, "-");
+        let rating = await getScore(searchResult.id);
+        return new Rating(rating.score, link, service);
     }
-
-    let link = 'https://opencritic.com/game/' + searchResult.id + '/' + searchResult.name.replace(/ /g, "-");
-    let rating = await getScore(searchResult.id);
-    if (rating.error) {
+    catch (e) {
         return new Rating(undefined, link, service);
     }
-    return new Rating(rating.score, link, service);
 }
 
 module.exports = () => {

@@ -3,8 +3,8 @@ module.exports = (dir) => {
     const nintendo = require(dir + '/nintendoShopService')();
     const metacritic = require(dir + '/metacriticService')();
     const opencritic = require(dir + '/opencriticService')();
-    const rating = require(dir + '/ratingService')(opencritic, metacritic);
     const data = require(dir + '/gameService')();
+    const rating = require(dir + '/ratingService')(opencritic, metacritic, data);
     const saleHistory = require(dir + '/saleHistoryService')();
     const fetch = require(dir + '/fetchService')(data, nintendo, saleHistory);
     const scoreUpdate = require(dir + '/scoreUpdateService')(data, rating);

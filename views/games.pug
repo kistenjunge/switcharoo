@@ -2,12 +2,12 @@ extends layout
 
 mixin game(item)
     tr(class="mdc-data-table__row").content
-        if (item.rating == null)
+        if !item.rating_available
             td -
-        else if (item.rating.score == null)
+        else if !item.rating_hasScore
             td tbd
         else
-            td.metascore #{item.rating.score}
+            td.metascore #{item.rating_score}
         td #{item.discount}
         td #{item.title}
         td #{item.saleDetails.price}
@@ -16,8 +16,8 @@ mixin game(item)
         td
             a(class="mdc-icon-button meterial-icons" href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
                 i(class="material-icons mdc-button__icon") storefront
-            if (item.rating != null && item.rating.ratings.length > 0)
-                a(class="mdc-icon-button meterial-icons" href=item.rating.ratings[0].link rel="noopener noreferrer" target="_blank")
+            if rating_available
+                a(class="mdc-icon-button meterial-icons" href=item.rating_providers[0].link rel="noopener noreferrer" target="_blank")
                     i(class="material-icons mdc-button__icon") show_chart
 
 block content
