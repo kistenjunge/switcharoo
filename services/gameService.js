@@ -23,55 +23,67 @@ module.exports = () => {
         },
 
         getRatedGames: () => {
-            return db.games.find().filter(g => (g.score != undefined));
+            return db.games.find({rating_available: true, rating_hasScore: true});
         },
 
-        getUnratedGames: () => {
-            return db.games.find().filter(g => (g.score == undefined));
+        // rating website link exists, but rating is not available yet
+        getGamesWithoutScore: () => {
+            return db.games.find({rating_available: true, rating_hasScore: false});
+        },
+
+        // could not be found at any rating website
+        getGamesWithoutRating: () => {
+            return db.games.find({rating_available: false});
         },
 
         getStats: () => {
-            const tbd = db.games.find().filter(g => (g.score === 0)).length;
-            const notFound = db.games.find().filter(g => (g.score === -1)).length;
-            return { tbd: tbd, notFound: notFound }
+            const gameOnSale = db.games.count();
+            const gamesWithRating = module.exports().getRatedGames().length;
+            const tbd = module.exports().getGamesWithoutScore().length;
+            const notFound = module.exports().getGamesWithoutRating().length;
+            return { notFound: notFound, unrated: tbd, rated: gamesWithRating, total: gameOnSale};
         },
 
         saveGame: (game) => {
             db.games.save(game);
         },
 
-        retry: () => {
-
+        // FIXME - resets everything. Seems like using a query with more than one parameter might be broken?
+        resetRatingForGamesWithoutScore: () => {
             const options = {
                 multi: true
-            }
-
-            const queryTba = {
-                score: 0
             };
-
-            const queryNotFound = {
-                score: -1
+            const queryWithoutScore = {
+                //rating_score: undefined
+                //not working as expected
+                rating_available: true,
+                rating_hasScore: false
             };
-
             const update = {
-                score: undefined
-            }
-
-            db.games.update(queryTba, update, options);
-            db.games.update(queryNotFound, update, options);
+                rating_providers: undefined,
+                rating_available: false,
+                rating_hasScore: false,
+                rating_score: undefined
+            };
+            db.games.update(queryWithoutScore, update, options);
         },
 
-        setMetacritInfo: (id, rating, url) => {
-            const score = (rating === 'tbd') ? 0 : rating;
+        getRatingsFromProviders: (id) => {
+            return db.games.findOne({ _id: id }).rating_providers;
+        },
 
+        setRating: (id, score, ratings) => {
+            const hasScore = typeof score !== 'undefined';
+            const hasRating = (typeof ratings !== 'undefined' && ratings.length > 0);
             let query = {
                 _id: id
             };
             let update = {
-                score: score,
-                metacriticUrl: url
-            }
+                rating_available: hasRating,
+                rating_hasScore: hasScore,
+                rating_providers: ratings,
+                rating_score: score
+            };
             db.games.update(query, update);
         }
     }

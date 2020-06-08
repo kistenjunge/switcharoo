@@ -8,7 +8,12 @@ mixin game(item)
             .switcharoo-card_priceContainer(style='flex-grow: 1')
                 mdc-typography.mdc-typography--headline6(style='margin-right: .31rem; opacity: .3; text-decoration: line-through') €#{item.priceRegular}
                 span.mdc-typography.mdc-typography--headline6 €#{item.saleDetails.price}
-            .mdc-typography.mdc-typography--headline6 #{item.score}
+            if item.rating_hasScore
+                .mdc-typography.mdc-typography--headline6 #{item.rating_score}
+            else if item.rating_available
+                .mdc-typography.mdc-typography--headline6 tbd
+            else
+                .mdc-typography.mdc-typography--headline6 ?
           .mdc-card__media.mdc-card__media--square(style='background-image: url(' + item.imageUrl + ')')
           .switcharoo-card__info(style='padding: 8px;')
             .mdc-typography.mdc-typography--headline6(style="font-size: .88rem;") #{item.title}
@@ -17,8 +22,8 @@ mixin game(item)
             .mdc-card__action-icons
               a(href='https://www.nintendo.de' + item.nintendoUrl rel="noopener noreferrer" target="_blank")
                 button.material-icons.mdc-icon-button.mdc-card__action.mdc-card__action--icon(title='Nintendo Store') storefront
-              if item.score != null
-                a(href=item.metacriticUrl rel="noopener noreferrer" target="_blank")
+              if item.rating_available
+                a(href=item.rating_providers[0].link rel="noopener noreferrer" target="_blank")
                   button.material-icons.mdc-icon-button.mdc-card__action.mdc-card__action--icon(title='Metacritic') show_chart
 
 block content

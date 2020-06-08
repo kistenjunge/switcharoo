@@ -3,8 +3,8 @@
 
 module.exports = (gameService, scoreUpdateService) => {
     return async (req, res) => {
-        gameService.retry();
-        scoreUpdateService.checkAndUpdateScores();
+        gameService.resetRatingForGamesWithoutScore();
+        await scoreUpdateService.checkAndUpdateScores();
         res.sendStatus(202);
     };
 };

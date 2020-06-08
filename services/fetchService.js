@@ -9,6 +9,8 @@ function Game(game) {
     this.imageUrl = 'https:' + game.image_url_sq_s;
     this.priceRegular = game.price_regular_f;
     this.nintendoUrl = game.url;
+    this.rating_available = false;
+    this.rating_hasScore = false;
 }
 
 function Sleep(milliseconds) {
@@ -42,7 +44,7 @@ module.exports = (dataService, nintendoService, saleService) => {
             if (gamesToAdd != undefined && gamesToAdd.length >= 0) {
                 const priceInfos = await nintendoService.getPriceInfoForGames(gamesToAdd.map(game => game.nsId));
                 gamesToAddWithSaleDetails = gamesToAdd
-                    .filter(game => priceInfos.get(game.nsId) != undefined) // remove games without price discount
+                    .filter(game => typeof priceInfos.get(game.nsId) !== 'undefined') // remove games without price discount
                     .map(game => {
                         const info = priceInfos.get(game.nsId);
                         const historyEntry = saleService.addSale(game.nsId, new Sale(info.price, info.start, info.end));

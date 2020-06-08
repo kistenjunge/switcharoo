@@ -2,9 +2,10 @@
 
 module.exports = (dataService) => {
     return (req,res) => {
-        const ratedGames = dataService.getRatedGames().sort( (a, b) => b.score - a.score);
-        const unratedGames = dataService.getUnratedGames();
-        const games = ratedGames.concat(unratedGames);
+        const ratedGames = dataService.getRatedGames().sort( (a, b) => b.rating_score - a.rating_score);
+        const withoutScore = dataService.getGamesWithoutScore();
+        const unratedGames = dataService.getGamesWithoutRating();
+        const games = ratedGames.concat(withoutScore, unratedGames);
         res.render('cards', { gamesList: games });
     };
 };
