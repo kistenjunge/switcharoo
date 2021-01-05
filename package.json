@@ -10,7 +10,7 @@
     "@material/icon-button": "^4.0.0",
     "@material/layout-grid": "^4.0.0",
     "@material/typography": "^4.0.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap4-toggle": "^3.6.1",
     "cookie-parser": "^1.4.5",
     "cron": "^1.8.2",
