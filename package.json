@@ -26,7 +26,7 @@
     "morgan": "~1.9.1",
     "nintendo-switch-eshop": "^2.2.8",
     "node-sass-middleware": "^0.11.0",
-    "pug": "^2.0.4"
+    "pug": "^3.0.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
