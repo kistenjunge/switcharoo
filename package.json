@@ -21,7 +21,7 @@
     "fast-levenshtein": "^2.0.6",
     "http-errors": "~1.6.3",
     "metacritic": "0.0.11",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "moment-range": "^4.0.2",
     "morgan": "~1.9.1",
     "nintendo-switch-eshop": "^2.2.8",
